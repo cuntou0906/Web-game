@@ -1,0 +1,49 @@
+.title{
+    text-align: center;
+    z-index: -4;
+  }
+  .ope{
+    z-index: -4;
+    width: 100px;
+    height:25px;
+  }
+  .div{
+      position: absolute;
+      left: 0px;
+      top:0px;
+      margin: 20px;
+  }
+  .head{
+      z-index: 3;
+      width: 10px;
+      height: 10px;
+      background: red;
+      position: absolute;
+      left: 500px;
+      top: 200px;
+  }
+  .snackbody{
+      z-index: 3;
+      width: 10px;
+      height: 10px;
+      background: rgb(184, 161, 61);
+      position: absolute;
+      left: 510px;
+      top: 200px;
+  }
+  .snackbody1{
+      z-index: 3;
+      width: 10px;
+      height: 10px;
+      background: rgb(184, 161, 61);
+      position: absolute;
+      left: 520px;
+      top: 200px;
+  }
+  .food{
+      z-index: 3;
+      width: 10px;
+      height: 10px;
+      background: blue;
+      position: absolute;
+  }

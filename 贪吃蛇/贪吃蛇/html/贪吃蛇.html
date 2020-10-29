@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>贪吃蛇__村头</title>
+</head>
+<style>
+  body{
+    background: #ffffff;
+    overflow: hidden;
+  }
+  
+</style>
+
+<link rel="stylesheet" type="text/css" href="../css/snack.css">
+<body>
+<h1 id="h1" class="title">贪吃蛇</h1>
+<div class="div">
+<div id="Start_game"  onclick="startgame()" class="ope"><span data-text="" >开始游戏</span></div>
+<div id="Over_game" onclick="overgame()"  class="ope"><span data-text="" >结束游戏</span></div>
+<div class="ope" id="score">分数：0</div>
+<select name="cars" id="timerspeed">
+    <option value="volvo">简单</option>
+    <option value="saab">初级</option>
+    <option value="fiat" selected>中等</option>
+    <option value="audi">困难</option>
+    <option value="audi">地狱</option>
+</select>
+</div>
+<div class="head" id='head'></div>
+<div class="snackbody" id='body1'></div>
+<div class="snackbody1" id='body2'></div>
+<script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>像素小鸟嘻嘻</title>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/style.css">
+<style>
+body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+</style>
+</head>
+
+<body onload="init()"> 
+    
+<img id="background1" src='./img/background.png' alt="无法显示图片">
+<div class="bird" id="bird"></div>
+<div class="score" id="score" >分数:0</div>
+<audio src="./vedio/bgm.mp3" controls autoplay loop class="audio"></audio>
+<script src="./js/flybird.js"></script>
+
+
+</body>
+</html>

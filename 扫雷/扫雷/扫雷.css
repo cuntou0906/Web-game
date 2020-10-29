@@ -1,0 +1,124 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+.wrapper{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-image: url("img/背景.jpg");
+    background-size: 100% 100%;
+}
+
+.start {
+    margin-top: 20px;
+    width: 150px;
+    height: 50px;
+    border-radius: 10px;
+    background: yellowgreen;
+    line-height: 50px;
+    text-align: center;
+    color: #fff;
+    position: absolute;
+    top: 10px;
+    left:10px;
+    cursor: pointer;
+}
+.over {
+    margin-top: 20px;
+    width: 150px;
+    height: 50px;
+    border-radius: 10px;
+    background: rgb(223, 94, 94);
+    line-height: 50px;
+    text-align: center;
+    color: #fff;
+    position: absolute;
+    top: 80px;
+    left:10px;
+    cursor: pointer;
+}
+
+.box{
+    height: 500px;
+    width: 500px;
+    transform: perspective(800px) rotateX(45deg);
+    margin: 20px auto;
+    border: 1px solid rgb(107, 199, 45);
+    box-shadow: 5px 5px 5px rgb(0, 0, 0,0.3);
+    display: none;
+}
+.flagbox{
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    width: 200px;
+    height: 50px;
+    margin-left: -100px;
+    color: rgb(151, 39, 39);
+    font-size: 20px;
+    font-weight: bolder;
+    display: none; 
+}
+.alertBox{
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left:0;
+    top:0;
+    background-color:rgb(0,0,0,0.2);
+}
+.alertImg{
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    left:0;
+    top:0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-image: url("img/失败.jpg");
+    background-size: 100% 100%;
+    border-radius: 10px;
+}
+.close{
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top:0;
+    right: 0;
+    margin: auto;
+    background-image: url("img/关闭.png");
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+.block{
+    width: 49px;
+    height: 49px;
+    border-right: 1px solid rgb(107, 199, 45);
+    border-bottom: 1px solid rgb(107, 199, 45);
+    box-shadow: 0px 0px 5px rgb(0, 0, 0,0.3) inset;
+    background-image: url("img/草.png");
+    background-size: 100% 100%;
+    float: left;
+}
+.isshow{
+    background-image: url("img/炸弹.png");
+    background-size: 100% 100%;
+}
+.num{
+    background-color: bisque;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 49px;
+    text-align: center;
+    background-image: none;
+}
+.flag{
+    background-image: url("img/红旗.png");
+    background-size: 100% 100%;
+
+}

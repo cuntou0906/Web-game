@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>飞机大战</title>
+<!-- 引入jQuery -->
+<script src="https://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src="./dat.gui.min.js"></script>
+<!-- 类 -->
+<style type="text/css">
+body{
+	background: #54ad6b url('./images/bg.jpg') no-repeat fixed center; 
+  background-size: 100% 100%;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    resize:none;
+	}
+
+.bullet{
+    width: 20px;
+    height: 30px;
+    overflow: hidden;
+    position: absolute;
+}
+.hero{
+    width: 70px;
+    height: 80px;
+    position: absolute;
+}
+.animation{
+    
+    position: absolute;
+}
+.enemy{
+    width: 40px;
+    height: 50px;
+    position: absolute;
+}
+.over{
+    width: 200px;
+    height: 45px;
+    position: absolute;
+    top: 45%;
+    left: 43%;
+    border-right: royalblue solid 2px ;
+    border-bottom: royalblue solid 2px ;
+    background: #54ad6b;
+    text-align: center;
+    font-size: 30px;
+    display: none;
+}
+.start{
+    width: 200px;
+    height: 45px;
+    position: absolute;
+    top: 45%;
+    left: 43%;
+    border-right: royalblue solid 2px ;
+    border-bottom: royalblue solid 2px ;
+    background: #54ad6b;
+    text-align: center;
+    font-size: 30px;
+}
+.score{
+    width: 150px;
+    height: 30px;
+    position: absolute;
+    top: 0%;
+    left: 45%;
+    background: #54ad6b;
+    text-align: center;
+    font-size: 20px;
+}
+</style>
+</head> 
+<body  onload="init()" >
+<img id="hero" src="./images/hero.png" class="hero" >
+<audio src="./audio/bgm.mp3" autoplay=true loop=true controls> </audio>
+<audio id="bulletmusic" src="./audio/bullet.mp3" > </audio>
+<audio id="boommusic" src="./audio/boom.mp3" > </audio>
+<div class="over" id="over" onclick="options.startgame()">游戏结束</div>
+<div class="start" id="start"  onclick="options.startgame()">开始游戏</div>
+<div class="score" id="score">score:0</div>
+<script>
+    /*
+    1生成自担
+    */
+    var score=0;
+    var zidan=[]; //子弹
+    var enemy=[];  //敌人
+    var hero=document.getElementById("hero");
+    var enemycount=0;  //敌人生成频率
+    var bulletcount=0; //子弹生成频率
+    var timer2;   //通用计时器
+    var frames=[];  //逐帧动画图片
+    var animationimg=[];//播放动画用的组件
+    var animationtimer=[];//播放动画用的计时器
+    var animationcount=[]; //动画帧数
+    //初始化
+    var options
+
+    var Options = function() {
+
+        this.startgame = function() {
+
+          this.startgame = function() {
+
+          over=document.getElementById("start");
+          over.innerHTML="游戏准备"
+          over.style.display="block";
+           setTimeout(function(){
+    
+             start();
+              console.log("开始游戏")
+           over=document.getElementById("start");
+          over.style.display="none";
+          },3000)
+
+
+     };
+
+        };
+
+        this.enemyspeed =3;  //敌人速度
+        this.bulletspeed=7; //子弹速度
+        this.creatbullet=35;  //产生子弹速度
+        this.createnemy=70  //产生敌人速度速度
+
+      };
+      
+    function init(){
+        options = new Options();
+        var gui = new dat.GUI();
+        gui.add(options, 'startgame');      
+    
+        gui.add(options, 'enemyspeed', 0.01, 20).step(0.01);
+        gui.add(options, 'bulletspeed', 0.01, 50).step(0.01);
+        gui.add(options, 'creatbullet', 1, 200).step(1);
+        gui.add(options, 'createnemy', 1, 200).step(1);
+
+    
+        var w=window.innerWidth;
+         var h=window.innerHeight; 
+         div1=document.getElementById("hero")
+         div1.style.left=w/2+"px";
+         div1.style.top=h/1.2+"px";
+         // 游戏结束界面隐藏
+         over=document.getElementById("over");
+         over.style.display="none";
+         document.removeEventListener("mousemove", DivFlying)
+         document.removeEventListener('touchstart',touch,false);
+         document.removeEventListener('touchmove',touch,false);
+         document.removeEventListener('touchend',touch,false);
+          remove();
+
+    //爆炸动画图片  //存储照片的名称 19个字符串元素
+    const EXPLO_IMG_PREFIX  = './images/explosion'
+    const EXPLO_FRAME_COUNT = 19
+    for ( let i = 0;i < EXPLO_FRAME_COUNT;i++ ) {
+      frames.push(EXPLO_IMG_PREFIX + (i + 1) + '.png')    //字符串
+    }
+
+    }
+    //游戏结束
+   function gameover(){
+    clearInterval(timer2)
+    remove();
+    document.removeEventListener("mousemove", DivFlying)
+    document.removeEventListener('touchstart',touch,false);
+    document.removeEventListener('touchmove',touch,false);
+    document.removeEventListener('touchend',touch,false);
+   // 游戏结束界面绘制
+   over=document.getElementById("over");
+     over.style.display="block";
+
+     document.body.style.overflow = 'auto';
+    window.removeEventListener('touchmove', _preventDefault);
+    
+   }
+   function _preventDefault(e) { e.preventDefault();}
+    //开始游戏
+    function start(){
+          remove();
+          score=0;
+          animationcount=[];
+          document.addEventListener("mousemove", DivFlying);
+          document.addEventListener('touchstart',touch,false);
+          document.addEventListener('touchmove',touch,false);
+          document.addEventListener('touchend',touch,false);
+          // 游戏结束界面隐藏
+          over=document.getElementById("over");
+         over.style.display="none";
+        
+         //mobile端防止拖动
+        document.body.style.overflow = 'hidden';
+         window.addEventListener('touchmove', _preventDefault);
+
+         animationimg=[];//播放动画用的组件
+         animationtimer=[];//播放动画用的计时器
+         animationcount=[]; //动画帧数
+
+          //生成hero
+         //console.log("111")
+         var w=window.innerWidth;
+         var h=window.innerHeight; 
+         div1=document.getElementById("hero")
+         div1.style.left=w/2+"px";
+         div1.style.top=h/1.2+"px";
+
+      //定时器
+    timer2=setInterval(function () {
+    //敌人生成
+    //console.log(score)
+    enemycount=enemycount+1;
+    bulletcount= bulletcount+1;
+    if(enemycount<=options.createnemy){
+      //console.log(options.createnemy)
+     }
+    else{
+      createnemy();
+      enemycount=0;
+    }
+   //生成子弹
+    if(bulletcount<=options.creatbullet){
+    }
+    else{
+      bullet();  
+      bulletcount=0;
+    }
+    //子弹移动
+    if(zidan.length!=0)
+    {
+        //console.log("没有子弹哭唧唧！")
+        zidan.forEach(function(item,index){
+      item.style.top=item.offsetTop-options.bulletspeed+"px";
+        if(item.offsetTop<=0){
+          document.body.removeChild(item);
+          zidan.splice(index,1);
+        }
+      })
+    }
+      
+     //敌人移动
+    if(enemy.length!=0)
+    {
+        //console.log("没有子弹哭唧唧！")
+        enemy.forEach(function(item,index){
+      item.style.top=item.offsetTop+options.enemyspeed+"px";
+        if(item.offsetTop>=window.innerHeight*0.9){
+          document.body.removeChild(item);
+          enemy.splice(index,1);
+        }
+      })
+    }
+      collisionDetection();
+      },20);
+      
+     
+      }
+
+      //移除所有元素
+      function remove(){
+    //document.removeChild(hero);
+    zidan.forEach((item,index) => {
+           document.body.removeChild(item);
+           zidan.splice(index,1);  //子弹不可见
+    })
+    enemy.forEach((item,index) => {
+           document.body.removeChild(item);
+           enemy.splice(index,1);  //子弹不可见
+    })
+      }
+
+
+   //碰撞函数
+   function isCollideWith(sp,st){
+    let spX = sp.offsetLeft + sp.width / 2;  /*获取中心点*/
+    let spY = sp.offsetTop + sp.height / 2;
+    //console.log(spX)
+    return !!(   spX >= st.offsetLeft-sp.width / 2
+              && spX <= st.offsetLeft + st.width+sp.width / 2
+              && spY >= st.offsetTop- sp.height / 2
+              && spY <= st.offsetTop + st.height+ sp.height / 2);
+  }
+
+// 全局碰撞检测
+function collisionDetection() {
+    //console.log("碰撞检测")
+    zidan.forEach((bullet,index) => {
+      for ( let i = 0, il = enemy.length; i < il;i++ ) {
+        let enemy1 = enemy[i]
+
+        if (isCollideWith(enemy1,bullet)){
+          //enemy.playAnimation()  
+         // console.log("子弹与敌人相撞")
+          score=score+1; //分数
+          //播放音乐
+         var music1=document.getElementById("boommusic");
+          music1.play();
+          creatanimation(bullet.offsetLeft,bullet.offsetTop);
+        // animation(bullet.offsetLeft,bullet.offsetTop);
+      
+          var tt=document.getElementById("score");
+          tt.innerHTML="分数："+score
+           
+           document.body.removeChild(enemy[i]);
+           document.body.removeChild(bullet);
+           enemy.splice(i,1);  //子弹不可见
+           zidan.splice(index,1);  //子弹不可见
+           break
+        }
+      }
+    })
+
+    for ( let i = 0, il = enemy.length; i < il;i++ ) {
+      let enemy2 = enemy[i]
+      if (isCollideWith(enemy2,hero)) {    //来自index类 检测敌人与飞机是否碰撞
+        //enemy.playAnimation()  
+        //that.music.playExplosion()  //播放爆炸音乐
+        //databus.gameOver = true
+        //break
+        //alert("游戏结束")
+        clearInterval(timer2)
+        gameover();
+        break
+      }
+    }
+  }
+  function creatanimation(x,y){
+    var aa=document.createElement("img");
+        aa.id="animation"+animationimg.length;
+        aa.className="animation";
+        aa.style.left=x-20+"px";
+        aa.style.top=y-20+"px";
+        animationimg.push(aa)
+        document.body.appendChild(aa); 
+        var index=animationimg.length;
+        animation(x,y,index)
+        animationcount.push(0);
+  } 
+
+    function animation(x,y,z)
+     {
+      
+        var animationtimer1=setInterval(function(){
+           if(animationcount[z-1]<19){
+            var aa=animationimg[z-1]
+            //console.log(frames[animationcount])
+            aa.src=frames[animationcount[z-1]];
+            animationcount[z-1]++;
+            }else{
+             //aa.style.display="none";
+             animationcount[z-1]=0;
+             var aa=animationimg[z-1];
+             document.body.removeChild(aa)
+             clearInterval(animationtimer[z-1])
+             //zidan.splice(z-1,1);  //子弹不可见
+             //animationimg.splice(z-1,1);
+             //animationcount.splice(z-1,1);
+            // animationtimer.splice(z-1,1);
+         }
+         },30)
+        animationtimer.push(animationtimer1)
+                 
+     }  
+
+      //生成敌人
+     function createnemy(){
+     //console.log("敌人")
+     var div1=document.createElement("img");
+     var x=window.innerWidth*0.05+Math.random()*(window.innerWidth*0.9);
+     div1.className="enemy";
+     div1.src="./images/enemy.png"
+     div1.style.left = (x-35) + "px";
+     div1.style.top = 0+ "px";
+     enemy.push(div1);
+     document.body.appendChild(div1); 
+    }
+
+      //生成子弹 
+     function bullet(){
+        //console.log("子弹")
+        //播放音乐
+        var music=document.getElementById("bulletmusic");
+        music.play();
+
+        var div1=document.getElementById("hero");
+        var intX = div1.offsetLeft
+        var intY = div1.offsetTop;
+        var div1=document.createElement("img");
+        div1.className="bullet";
+        div1.src="./images/bullet.png"
+        div1.style.left = 25+(intX) + "px";
+        div1.style.top = (intY-20) + "px";
+        zidan.push(div1);
+        document.body.appendChild(div1);
+      }
+ 
+
+    //hero随着鼠标移动
+      function DivFlying() {
+     var div = document.getElementById("hero");
+        if (!div) {
+       return;
+      }
+    var intX = window.event.clientX;
+    var intY = window.event.clientY;
+  div.style.left = (intX-35) + "px";
+  div.style.top = (intY-40) + "px";
+}
+
+//hero随着触摸移动
+function touch(event) {
+     var div = document.getElementById("hero");
+        if (!div) {
+       return;
+      }
+      switch(event.type)
+      {
+        case "touchstart":
+            var intX = event.touches[0].clientX;
+            var intY =  event.touches[0].clientY;
+            div.style.left = (intX-35) + "px";
+            div.style.top = (intY-40) + "px";
+            break;
+            case  "touchmove":
+            var intX = event.changedTouches[0].clientX;
+            var intY =  event.changedTouches[0].clientY;
+            div.style.left = (intX-35) + "px";
+            div.style.top = (intY-40) + "px";
+            break;
+            case  "touchend":
+            var intX = event.touches[0].clientX;
+            var intY =  event.touches[0].clientY;
+            div.style.left = (intX-35) + "px";
+            div.style.top = (intY-40) + "px";
+            break;
+     }
+}
+
+
+//document.onmousemove = DivFlying;
+</script>
+</body>
+</html>
